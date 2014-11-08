@@ -1,0 +1,82 @@
+<html>
+	<head>
+		<title>2014 Budget</title>
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+		<script src="http://cdnjs.cloudflare.com/ajax/libs/d3/3.4.13/d3.min.js"></script>
+		<script src="http://cdnjs.cloudflare.com/ajax/libs/crossfilter/1.3.11/crossfilter.min.js"></script>
+		<script src="http://cdnjs.cloudflare.com/ajax/libs/dc/2.0.0-alpha.2/dc.min.js"></script>
+		<script src="http://cdnjs.cloudflare.com/ajax/libs/async/0.9.0/async.js"></script>
+
+		<link rel="stylesheet" type="text/css" href="http://cdnjs.cloudflare.com/ajax/libs/dc/2.0.0-alpha.2/dc.css"></link>
+		<script type="text/javascript">
+			$(document).ready( function( ){
+				$.getJSON( "https://data.winnipeg.ca/api/views/hk5w-mj8b/rows.json", function( res ){
+
+					var _columns = [ ];
+					res.meta.view.columns.forEach( function( column ){
+						_columns.push( column.name );
+					} );
+
+					var _departments = [ ];
+					async.map( res.data, function( dataObject, cb ){
+
+						var _return = { };
+						for( var i=0; i<dataObject.length; i++ ){
+							_return[_columns[i]] = dataObject[i];
+						}
+
+						if( _departments.indexOf( _return['Department'] ) < 0 ){
+							_departments.push( _return['Department'] );
+						}
+						_return['Department'] = _departments.indexOf( _return['Department'] );
+
+						return cb( null, _return );
+
+					}, function( err, data ){
+						
+						var department2014Chart	= dc.barChart( "#department2014" );
+						var department2015Chart	= dc.barChart( "#department2015" );
+						
+						var ndx = crossfilter( data );
+						var all	= ndx.groupAll( );
+						
+						var departmentDimension = ndx.dimension( function( c ){
+							return c.Department;
+						} );
+
+						department2014AdoptedGroup = departmentDimension.group( ).reduceSum( function( c ){
+							return parseInt( c['2014 Adopted'] );
+						} );
+
+						department2015ForecastGroup = departmentDimension.group( ).reduceSum( function( c ){
+							return parseInt( c['2015 Forecast'] );
+						} );
+
+						console.log( data[35] );
+
+						department2014Chart.width( 600 )
+							.height( 300 )
+							.margins( { top: 30, left: 90, bottom: 30, right: 30 } )
+							.dimension( departmentDimension )
+							.group( department2014AdoptedGroup )
+							.x( d3.scale.linear().domain([0,25]) );
+
+						department2015Chart.width( 600 )
+							.height( 300 )
+							.margins( { top: 30, left: 90, bottom: 30, right: 30 } )
+							.dimension( departmentDimension )
+							.group( department2015ForecastGroup )
+							.x( d3.scale.linear( ).domain( [0,25] ) );
+
+						dc.renderAll( );
+					});
+				} );
+			} );
+		</script>
+	</head>
+
+	<body>
+		<div id="department2014"></div>
+		<div id="department2015"></div>
+	</body>
+</html>
