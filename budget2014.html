@@ -36,6 +36,8 @@
 						
 						var department2014Chart	= dc.barChart( "#department2014" );
 						var department2015Chart	= dc.barChart( "#department2015" );
+						var department2016Chart	= dc.barChart( "#department2016" );
+						var department2017Chart	= dc.barChart( "#department2017" );
 						
 						var ndx = crossfilter( data );
 						var all	= ndx.groupAll( );
@@ -52,21 +54,44 @@
 							return parseInt( c['2015 Forecast'] );
 						} );
 
+						department2016ForecastGroup = departmentDimension.group( ).reduceSum( function( c ){
+							return parseInt( c['2016 Forecast'] );
+						} );
+
+						department2017ForecastGroup = departmentDimension.group( ).reduceSum( function( c ){
+							return parseInt( c['2017 Forecast'] );
+						} );
+
 						console.log( data[35] );
 
-						department2014Chart.width( 600 )
-							.height( 300 )
-							.margins( { top: 30, left: 90, bottom: 30, right: 30 } )
+						department2014Chart.width( 450 )
+							.height( 200 )
+							.margins( { top: 20, left: 80, bottom: 20, right: 20 } )
 							.dimension( departmentDimension )
 							.group( department2014AdoptedGroup )
-							.x( d3.scale.linear().domain([0,25]) );
+							.x( d3.scale.linear().domain([0,20]) );
 
-						department2015Chart.width( 600 )
-							.height( 300 )
-							.margins( { top: 30, left: 90, bottom: 30, right: 30 } )
+						department2015Chart.width( 450 )
+							.height( 200 )
+							.margins( { top: 20, left: 80, bottom: 20, right: 20 } )
 							.dimension( departmentDimension )
 							.group( department2015ForecastGroup )
-							.x( d3.scale.linear( ).domain( [0,25] ) );
+							.x( d3.scale.linear( ).domain( [0,20] ) );
+
+						department2016Chart.width( 450 )
+							.height( 200 )
+							.margins( { top: 20, left: 80, bottom: 20, right: 20 } )
+							.dimension( departmentDimension )
+							.group( department2016ForecastGroup )
+							.x( d3.scale.linear( ).domain( [0,20] ) );
+
+						department2017Chart.width( 450 )
+							.height( 200 )
+							.margins( { top: 20, left: 80, bottom: 20, right: 20 } )
+							.dimension( departmentDimension )
+							.group( department2017ForecastGroup )
+							.x( d3.scale.linear( ).domain( [0,20] ) );
+
 
 						dc.renderAll( );
 					});
@@ -78,5 +103,7 @@
 	<body>
 		<div id="department2014"></div>
 		<div id="department2015"></div>
+		<div id="department2016"></div>
+		<div id="department2017"></div>
 	</body>
 </html>
