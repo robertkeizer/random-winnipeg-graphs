@@ -7,12 +7,19 @@
 		<script src="http://cdnjs.cloudflare.com/ajax/libs/dc/2.0.0-alpha.2/dc.min.js"></script>
 		<script src="http://cdnjs.cloudflare.com/ajax/libs/async/0.9.0/async.js"></script>
 		<script src="http://cdnjs.cloudflare.com/ajax/libs/semantic-ui/0.19.3/javascript/semantic.min.js"></script>
+		<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery.address/1.6/jquery.address.min.js"></script>
 
 		<link rel="stylesheet" type="text/css" href="http://cdnjs.cloudflare.com/ajax/libs/dc/2.0.0-alpha.2/dc.css"></link>
 		<link rel="stylesheet" type="text/css" href="http://cdnjs.cloudflare.com/ajax/libs/semantic-ui/0.19.3/css/semantic.min.css"></link>
 
 		<script type="text/javascript">
 			$(document).ready( function( ){
+
+				$(".main-sidebar").tab( { auto: true, path: "/foo" } );
+				$(".main-sidebar").sidebar( "toggle" );
+
+				$(".main-dimmer").removeClass("active");
+			
 				$.getJSON( "https://data.winnipeg.ca/api/views/hk5w-mj8b/rows.json", function( res ){
 
 					var _columns = [ ];
@@ -93,8 +100,8 @@
 							.group( department2017ForecastGroup )
 							.x( d3.scale.linear( ).domain( [0,20] ) );
 
-
 						dc.renderAll( );
+
 					});
 				} );
 			} );
@@ -102,25 +109,18 @@
 	</head>
 
 	<body>
-		<div class="ui left sidebar active">
-			<div class="ui header item">Winnipeg Graphs</div>
-			<div class="ui item">
-				<div class="ui vertical menu">
-					<div class="header item">
-						Budget
-					</div>
-					<div class="item">
-						Year
-						<div class="menu">
-							<a class="item">2014</a>
-							<a class="item">2015</a>
-							<a class="item">2016</a>
-						</div>
-					</div>
-				</div>
-			</div>
+		<div class="main-dimmer ui dimmer active">
+			<div class="main-dimmer-text ui text loader">Loading..</div>
 		</div>
-		<div class="ui two column grid">
+
+		<div class="main-sidebar ui thin vertical sidebar menu">
+			<div class="header item"> City Finances </div>
+			<a class="item" data-tab="budget-2014">2014 Budget</a>
+			<div class="header item"> MLCC </div>
+			<a class="item" data-tab="mlcc-current-stock">Current Stock</a>
+		</div>
+
+		<div class="ui segment two column grid">
 			<div class="column">
 				<div id="department2014"></div>
 			</div>
